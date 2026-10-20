@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Industrial Automation AI News</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        header { background: #1e293b; color: white; padding: 30px; border-radius: 8px; margin-bottom: 30px; text-align: center; }
+        h1 { margin: 0; font-size: 24px; }
+        .grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 768px) { .grid { grid-template-columns: 1fr 1fr; } }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; }
+        .source { font-size: 12px; font-weight: bold; text-transform: uppercase; color: #0284c7; margin-bottom: 5px; }
+        .title { font-size: 18px; font-weight: bold; margin: 0 0 10px 0; color: #0f172a; }
+        .summary { font-size: 14px; color: #475569; line-height: 1.5; margin-bottom: 15px; }
+        .btn { display: inline-block; background: #0f172a; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; font-size: 14px; font-weight: bold; text-align: center; }
+        .btn:hover { background: #1e293b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Industrial Automation – Wöchentlicher KI-Report</h1>
+            <p style="margin: 5px 0 0 0; opacity: 0.8;">Automatisch gescrapt & zusammengefasst via Claude 3.5 Sonnet</p>
+        </header>
+        <div id="news-grid" class="grid">
+            <p>Lade aktuelle Meldungen...</p>
+        </div>
+    </div>
+
+    <script>
+        fetch('news.json')
+            .then(response => response.json())
+            .then(data => {
+                const grid = document.getElementById('news-grid');
+                grid.innerHTML = ''; // Lade-Text entfernen
+                
+                data.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <div>
+                            <div class="source">${item.source}</div>
+                            <div class="title">${item.title}</div>
+                            <div class="summary">${item.summary || 'Keine Zusammenfassung verfügbar.'}</div>
+                        </div>
+                        <a href="${item.link}" target="_blank" class="btn">Original-Artikel lesen ➔</a>
+                    `;
+                    grid.appendChild(card);
+                });
+            })
+            .catch(error => {
+                document.getElementById('news-grid').innerHTML = '<p>Aktuell sind noch keine News vorhanden. Der erste automatische Run startet am Sonntag.</p>';
+            });
+    </script>
+</body>
+</html>
