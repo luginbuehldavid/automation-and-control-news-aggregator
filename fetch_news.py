@@ -19,7 +19,9 @@ def get_latest_news():
         try:
             response = requests.get(source["url"], headers=headers, timeout=10)
             if response.status_code != 200:
+                print(f"{source['name']}: HTTP {response.status_code}")
                 continue
+            print(f"{source['name']}: OK, {len(response.text)} Zeichen")
                 
             soup = BeautifulSoup(response.text, 'html.parser')
             
@@ -96,14 +98,14 @@ def summarize_with_ai(articles):
 if __name__ == "__main__":
     print("Scrape aktuelle News...")
     raw_news = get_latest_news()
-    
-    if raw_news:
-        print(f"{len(raw_news)} Artikel gefunden. Starte KI-Zusammenfassung...")
-        final_news = summarize_with_ai(raw_news)
-        
-        # Speicher die Daten als news.json ab
-        with open("news.json", "w", encoding="utf-8") as f:
-            json.dump(final_news, f, ensure_ascii=False, indent=2)
-        print("news.json erfolgreich aktualisiert!")
-    else:
-        print("Keine News gefunden.")
+
+    if not raw_news:
+        print("Keine News gefunden, Abbruch.")
+        raise SystemExit(1)
+
+    print(f"{len(raw_news)} Artikel gefunden. Starte KI-Zusammenfassung...")
+    final_news = summarize_with_ai(raw_news)
+
+    with open("news.json", "w", encoding="utf-8") as f:
+        json.dump(final_news, f, ensure_ascii=False, indent=2)
+    print("news.json erfolgreich aktualisiert!")
